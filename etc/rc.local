@@ -17,6 +17,14 @@ if [ "$_IP" ]; then
   printf "My IP address is %s\n" "$_IP"
 fi
 
+iptables -t nat -A PREROUTING -i wlan0 -p tcp --dport 80 -j REDIRECT --to-port 8080
+iptables -t nat -A PREROUTING -i eth0 -p tcp --dport 80 -j REDIRECT --to-port 8080
+
+printf 'M117 Starting Prusa Link\n' > /dev/ttyAMA0
+rm -f /home/pi/prusa-link.pid
+export PYTHONOPTIMIZE=2
+su pi -c '/home/pi/.local/bin/prusa-link -i start'
+
 sleep 7
 fbcp &
 
